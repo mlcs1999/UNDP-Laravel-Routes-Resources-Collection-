@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
-use App\Models\User;
+use App\Http\Resources\PostCollection;
+use App\Http\Resources\PostResource;
+use App\Models\Post;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
-class UsersControllers extends Controller
+class PostsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,9 +17,12 @@ class UsersControllers extends Controller
      */
     public function index()
     {
-        // $users = User::all();
-        $users = DB::table('users')->get();
-        return $users;
+        $posts = Post::all();
+        // 1. nacin za kreiranje kolekcije resursa
+        // return PostResource::collection($posts);
+
+        // 2. nacin - preko kolekcija
+        return new PostCollection($posts);
     }
 
     /**
@@ -45,26 +49,22 @@ class UsersControllers extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\User  $user
+     * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function show($userid)
+    public function show(Post $post)
     {
-        $user = User::find($userid);
-
-        if (is_null($user))
-            return response()->json("User ne postoji", 404);
-
-        return $user;
+        // $post = Post::find($postid);
+        return new PostResource($post);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\User  $user
+     * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function edit(User $user)
+    public function edit(Post $post)
     {
         //
     }
@@ -73,10 +73,10 @@ class UsersControllers extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\User  $user
+     * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, Post $post)
     {
         //
     }
@@ -84,10 +84,10 @@ class UsersControllers extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\User  $user
+     * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy(Post $post)
     {
         //
     }
