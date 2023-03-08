@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\PostsController;
 use App\Http\Controllers\UsersControllers;
 use Illuminate\Http\Request;
@@ -29,3 +30,16 @@ Route::get('/users/{id}', [UsersControllers::class, 'show']);
 Route::resource('/posts', PostsController::class)->only(['index', 'show']);
 
 // Route::get('/users/{id}/posts', [UserPostsController::class, 'index']);
+
+//Registracija korisnika
+Route::post('/register', [AuthController::class, 'register']);
+
+//Login
+Route::post('/login', [AuthController::class, 'login']);
+
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::resource('posts', PostsController::class)->only(['update', 'store', 'destroy']);
+
+    Route::post('/logout', [AuthController::class, 'logout']);
+
+});
