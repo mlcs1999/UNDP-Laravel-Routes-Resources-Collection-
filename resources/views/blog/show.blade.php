@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.blog')
 @section('content')
     <div class="container">
         <div class="row">
@@ -11,6 +11,7 @@
                 <br>
 
                 <i> Category: {{$post->category->name}}</i> 
+                @if($post->user->id == $user_login)
                 <hr>
                 <a href="/blog/{{ $post->id }}/edit" class="btn btn-outline-primary">Uredi Post</a>
                 <br><br>
@@ -21,6 +22,7 @@
                     @csrf
                     <button class="btn btn-danger">Obrisi Post</button>
                 </form>
+                @endif
             </div>
         </div>
     </div>

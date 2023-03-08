@@ -16,7 +16,7 @@ class UsersControllers extends Controller
      */
     public function index()
     {
-        // $users = User::all();
+        // $users = User::all()->where('user_id', user_id);
         $users = DB::table('users')->get();
         return $users;
     }

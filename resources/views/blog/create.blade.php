@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.blog')
 
 @section('content')
 
@@ -46,7 +46,7 @@
                                 @endforeach
                                 </select>
                             </div>
-                            <div class="control-group col-12">
+                            <!-- <div class="control-group col-12">
                                 <label for="user">Post User</label>
                                 <select name="user" class="form-select">
                                 @foreach ($users as $user)
@@ -55,7 +55,7 @@
                                     </option>
                                 @endforeach
                                 </select>
-                            </div>
+                            </div> -->
 
                             
                         </div>

@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PostsController extends Controller
 {
@@ -15,7 +16,6 @@ class PostsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index() //get ruta - jer prihvatamo podatke iz baze
-
     {
         //vraca sve postove iz baze
         $posts = Post::all();
@@ -23,6 +23,12 @@ class PostsController extends Controller
         return view('blog.index', [
             'posts' => $posts
         ]);
+
+        // $user = Auth::user();
+        // $user_posts = $user->posts;
+        // return view('blog.index', [
+        //     'posts' => $user_posts
+        // ]);
     }
 
     /**
@@ -31,7 +37,6 @@ class PostsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create() //get ruta - jer zelimo da prikazemo create form view
-
     {
         $categories = Category::all();
         $users = User::all();
@@ -50,14 +55,14 @@ class PostsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request) //post ruta - jer saljemo post zahtev i create u bazu
-
     {
         $noviPost = Post::create([
             'title' => $request->title,
             'excerpt' => $request->excerpt,
             'body' => $request->body,
             'slug' => $request->slug,
-            'user_id' => $request->user,
+            // 'user_id' => $request->user,
+            'user_id' => Auth::id(),
             'category_id' => $request->category
         ]);
 
@@ -71,13 +76,23 @@ class PostsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($postid) //get ruta - jer prihvatamo podatke iz baze
-
     {
-        $post = Post::find($postid);
 
-        return view('blog.show', [
-            'post' => $post
-        ]);
+        if ($postid == "my") {
+            $user = Auth::user();
+            $user_posts = $user->posts;
+            return view('blog.index', [
+                'posts' => $user_posts
+            ]);
+        } else {
+            $post = Post::find($postid);
+
+            return view('blog.show', [
+                'post' => $post,
+                'user_login' => Auth::id()
+            ]);
+
+        }
 
     }
 
@@ -88,16 +103,18 @@ class PostsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit($postid) //get ruta - jer zelimo da prikazemo edit form view
-
     {
         $post = Post::find($postid);
-        $categories = Category::all();
 
-        return view('blog.edit', [
-            'post' => $post,
-            'categories' => $categories
-        ]);
-
+        if ($post->user->id == Auth::id()) {
+            $categories = Category::all();
+            return view('blog.edit', [
+                'post' => $post,
+                'categories' => $categories
+            ]);
+        } else {
+            return redirect('/blog');
+        }
     }
 
     /**
@@ -108,7 +125,6 @@ class PostsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $postid) //put ruta - jer saljemo put zahtev i update u bazu
-
     {
         $post = Post::find($postid);
         $post->update([
@@ -129,11 +145,11 @@ class PostsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy($postid) //delete ruta - jer zelimo da obrisemo iz baze jedan red
-
     {
         $post = Post::find($postid);
-
-        $post->delete();
+        if ($post->user->id == Auth::id()) {
+            $post->delete();
+        }
 
         return redirect('/blog');
     }
